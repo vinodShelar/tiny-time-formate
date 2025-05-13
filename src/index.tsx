@@ -1,4 +1,4 @@
-type supportedTimeZones = 
+export type supportedTimeZones =
   | "Africa/Abidjan"
   | "Africa/Accra"
   | "Africa/Addis_Ababa"
@@ -359,9 +359,9 @@ type supportedTimeZones =
   | "Pacific/Tongatapu"
   | "Pacific/Wake"
   | "Pacific/Wallis";
-  
 
-  export type DateFormats =
+
+export type DateFormats =
   | 'dd-mm-yyyy'
   | 'mm-dd-yyyy'
   | 'yyyy-mm-dd'
