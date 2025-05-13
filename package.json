@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vinodShelar/tiny-time-formateREADME.md"
+    "url": "https://github.com/vinodShelar/tiny-time-formate"
   },
   "types": "dist/index.d.ts",
   "scripts": {
