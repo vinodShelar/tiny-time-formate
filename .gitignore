@@ -1,0 +1,42 @@
+# Node.js
+node_modules/
+
+# Build output
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# React
+*.env
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# Log files
+*.log
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+# NPM package lock file
+package-lock.json
+yarn.lock
+
+# Temporary files from the editor
+*.swp
+*.swo
+
+# TSLint cache
+tslint.json

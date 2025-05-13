@@ -1,0 +1,28 @@
+# Ignore source files
+src/
+*.tsx
+*.ts
+
+# Ignore config files
+tsconfig.json
+tsconfig.build.json
+.eslintrc.js
+.prettierrc
+.prettierignore
+.vscode/
+.env
+
+# Ignore test files
+*.spec.ts
+*.test.ts
+tests/
+
+# Ignore version control
+.git/
+.gitignore
+
+# Ignore build tools
+node_modules/
+build/
+coverage/
+dist/  # include only if you are not using "files" field in package.json

@@ -1,0 +1,28 @@
+{
+  "name": "tiny-time-formate",
+  "version": "1.0.0",
+  "description": "A simple and tiny utility to format dates and times with timezone and relative support",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vinodShelar/tiny-time-formatting"
+  },
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "date",
+    "time",
+    "formatter",
+    "utility",
+    "typescript",
+    "javascript",
+    "tiny"
+  ],
+  "author": "Vinod Nandulal Shelar",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

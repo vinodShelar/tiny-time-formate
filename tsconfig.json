@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "module": "CommonJS",
+      "lib": ["ES2017", "DOM"],  // Update to "ES2017"
+      "declaration": true,
+      "outDir": "dist",
+      "strict": true,
+      "esModuleInterop": true,
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "allowJs": false,
+      "isolatedModules": true,
+      "skipLibCheck": true
+    },
+    "include": ["src"]
+  }
+  
