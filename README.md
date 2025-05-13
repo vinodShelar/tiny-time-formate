@@ -43,6 +43,12 @@ Using yarn:
 yarn add tiny-time-formatter
 ```
 
+To Run the tests:
+
+```bash
+npm run test
+```
+
 ## Usage
 
 ```ts
