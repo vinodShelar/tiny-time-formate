@@ -1,4 +1,4 @@
-type supportedTimeZones = 
+export type supportedTimeZones =
   | "Africa/Abidjan"
   | "Africa/Accra"
   | "Africa/Addis_Ababa"
@@ -359,9 +359,9 @@ type supportedTimeZones =
   | "Pacific/Tongatapu"
   | "Pacific/Wake"
   | "Pacific/Wallis";
-  
 
-  export type DateFormats =
+
+export type DateFormats =
   | 'dd-mm-yyyy'
   | 'mm-dd-yyyy'
   | 'yyyy-mm-dd'
@@ -392,26 +392,34 @@ interface TimeFormatterOptions {
 export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFormatterOptions): string {
   const getZonedDate = (date: Date): Date => {
     if (!getTimezone) return date;
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: getTimezone,
-      hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-    const parts = formatter.formatToParts(date).reduce((acc, part) => {
-      if (part.type !== 'literal') acc[part.type] = part.value;
-      return acc;
-    }, {} as Record<string, string>);
-    return new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`);
+    try {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: getTimezone,
+        hour12: false,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      const parts = formatter.formatToParts(date).reduce((acc, part) => {
+        if (part.type !== 'literal') acc[part.type] = part.value;
+        return acc;
+      }, {} as Record<string, string>);
+      return new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`);
+    } catch (error) {
+      throw new Error(`Invalid timezone: ${getTimezone}`);
+    }
   };
 
   const parseDate = (input: Date | string | number): Date => {
     if (typeof input === 'number' || !isNaN(Number(input))) return new Date(Number(input));
-    return new Date(input);
+    const parsedDate = new Date(input);
+    if (isNaN(parsedDate.getTime())) {
+      throw new Error(`Invalid date: ${input}`);
+    }
+    return parsedDate;
   };
 
   const dateObj = getZonedDate(parseDate(date));
@@ -459,6 +467,11 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
       if (daysAgo < 30) return `${daysAgo} days ago`;
       return `${day} ${monthNameShort} ${year}`;
     }
-    default: return `${day}-${month}-${year}`;
+    default: {
+      if (format !== 'dd-mm-yyyy') {
+        throw new Error(`Invalid format: ${format}`);
+      }
+      return `${day}-${month}-${year}`;
+    }
   }
 }
