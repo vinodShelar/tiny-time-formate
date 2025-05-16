@@ -379,6 +379,7 @@ export type DateFormats =
   | 'HH:mm:ss'
   | 'dddd, dd MMM yyyy'
   | 'relative'
+  | 'future'
   | string;
 
 
@@ -443,6 +444,7 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
   const hoursAgo = Math.floor(minutesAgo / 60);
   const daysAgo = Math.floor(hoursAgo / 24);
 
+
   switch (format) {
     case 'dd-mm-yyyy': return `${day}-${month}-${year}`;
     case 'mm-dd-yyyy': return `${month}-${day}-${year}`;
@@ -466,6 +468,26 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
       if (hoursAgo < 24) return `${hoursAgo} hrs ago`;
       if (daysAgo < 30) return `${daysAgo} days ago`;
       return `${day} ${monthNameShort} ${year}`;
+    }
+    case 'future': {
+      const timeAhead = +dateObj - +now;
+      if (timeAhead <= 0) return 'opened just now';
+    
+      const sec = Math.floor(timeAhead / 1000);
+      const min = Math.floor(sec / 60);
+      const hr = Math.floor(min / 60);
+      const day = Math.floor(hr / 24);
+      const week = Math.floor(day / 7);
+      const month = Math.floor(day / 30);
+      const year = Math.floor(day / 365);
+    
+      if (sec < 60) return `opens in ${sec} sec${sec > 1 ? 's' : ''}`;
+      if (min < 60) return `opens in ${min} min${min > 1 ? 's' : ''}`;
+      if (hr < 24) return `opens in ${hr} hr${hr > 1 ? 's' : ''}`;
+      if (day < 7) return `opens in ${day} day${day > 1 ? 's' : ''}`;
+      if (week < 4) return `opens in ${week} week${week > 1 ? 's' : ''}`;
+      if (month < 12) return `opens in ${month} month${month > 1 ? 's' : ''}`;
+      return `opens in ${year} year${year > 1 ? 's' : ''}`;
     }
     default: {
       if (format !== 'dd-mm-yyyy') {

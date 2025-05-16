@@ -23,11 +23,26 @@ A lightweight TypeScript utility for flexible date formatting with support for r
   - 'HH:mm:ss'
   - 'dddd, dd MMM yyyy'
   - 'relative'
+  - 'future'
+
+
+
+
 
 - **Relative Time**: Human-readable time differences (e.g., "5 minutes ago", "3 hours ago")
 - **Timezone Support**: Convert and format dates across different timezones
 - **Localization**: Built-in English localization for month/weekday names (other languages extendable)
 - **Lightweight**: Zero dependencies, TypeScript-native
+
+> 🆕 **New in v1.0.3**  
+> The `'future'` format returns time remaining until a future date:
+> - `opens in 45 secs`
+> - `opens in 3 mins`
+> - `opens in 2 hrs`
+> - `opens in 5 days`
+> - `opens in 3 weeks`
+> - `opens in 2 months`
+> - `opens in 1 year`
 
 ## Installation
 
