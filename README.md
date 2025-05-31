@@ -44,6 +44,28 @@ A lightweight TypeScript utility for flexible date formatting with support for r
 > - `opens in 2 months`
 > - `opens in 1 year`
 
+> 🆕 **New in v1.0.4** 
+| Format String             | Output Example               |Description                          
+| `yyyy/MM/dd`              | `2025/05/31`                 | Year/Month/Day                         |
+| `dd/MM/yyyy`              | `31/05/2025`                 | Day/Month/Year                         |
+| `MM/dd/yyyy`              | `05/31/2025`                 | Month/Day/Year                         |
+| `hh:mm A, dd MMM yyyy`    | `12:00 PM, 31 May 2025`      | 12-hour time with short month and date |
+| `dddd, MMMM dd, yyyy`     | `Friday, May 31, 2025`       | Full day, full month, date, year       |
+| `ddd, MMM D, YYYY h:mm A` | `Fri, May 31, 2025 12:00 PM` | Short day, short month, time           |
+| `MMMM D, YYYY h:mm A`     | `May 31, 2025 12:00 PM`      | Full month with date and time          |
+| `MMMM D, YYYY`            | `May 31, 2025`               | Full month and date                    |
+| `MMM D, YYYY`             | `May 31, 2025`               | Short month and date                   |
+| `D MMMM YYYY`             | `31 May 2025`                | Date before full month                 |
+| `D MMM YYYY`              | `31 May 2025`                | Date before short month                |
+| `YYYY-MM-DDTHH:mm:ssZ`    | `2025-05-31T12:00:00Z`       | ISO format with Zulu timezone          |
+| `hh:mm:ss A`              | `12:00:00 PM`                | 12-hour time with seconds              |
+| `HH:mm:ss.SSS`            | `12:00:00.00`                | 24-hour time with milliseconds         |
+| `h:mm A`                  | `12:00 PM`                   | Short 12-hour time                     |
+| `hh:mm A, dddd`           | `12:00 PM, Friday`           | Time with full weekday                 |
+| `dddd`                    | `Friday`                     | Full weekday name                      |
+| `ddd`                     | `Fri`                        | Short weekday name                     |
+
+
 ## Installation
 
 Using npm:

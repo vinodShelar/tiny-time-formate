@@ -378,6 +378,26 @@ export type DateFormats =
   | 'hh:mm A'
   | 'HH:mm:ss'
   | 'dddd, dd MMM yyyy'
+  // new formats
+  | 'yyyy/MM/dd'
+  | 'dd/MM/yyyy'
+  | 'MM/dd/yyyy'
+  | 'hh:mm A, dd MMM yyyy'
+  | 'dddd, MMMM dd, yyyy'
+  | 'ddd, MMM D, YYYY h:mm A'
+  | 'MMMM D, YYYY h:mm A'
+  | 'MMMM D, YYYY'
+  | 'MMM D, YYYY'
+  | 'D MMMM YYYY'
+  | 'D MMM YYYY'
+  | 'YYYY-MM-DDTHH:mm:ssZ'
+  | 'hh:mm:ss A'
+  | 'HH:mm:ss.SSS'
+  | 'h:mm A'
+  | 'hh:mm A, dddd'
+  | 'dddd'
+  | 'ddd'
+
   | 'relative'
   | 'future'
   | string;
@@ -431,6 +451,7 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
   const minutes = dateObj.getMinutes().toString().padStart(2, '0');
   const seconds = dateObj.getSeconds().toString().padStart(2, '0');
   const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const dayNameShort = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
   const monthNameShort = dateObj.toLocaleString('en-US', { month: 'short' });
   const monthNameLong = dateObj.toLocaleString('en-US', { month: 'long' });
   const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -446,22 +467,42 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
 
 
   switch (format) {
-    case 'dd-mm-yyyy': return `${day}-${month}-${year}`;
-    case 'mm-dd-yyyy': return `${month}-${day}-${year}`;
-    case 'yyyy-mm-dd': return `${year}-${month}-${day}`;
-    case 'dd Month yyyy': return `${day} ${monthNameLong} ${year}`;
-    case 'dd Mon yyyy': return `${day} ${monthNameShort} ${year}`;
-    case 'dd Month, yyyy': return `${day} ${monthNameLong}, ${year}`;
-    case 'dd Mon, yyyy': return `${day} ${monthNameShort}, ${year}`;
-    case 'HH:mm dd/mm/yyyy': return `${hours24}:${minutes} ${day}/${month}/${year}`;
-    case 'HH:mm dd-mm-yyyy': return `${hours24}:${minutes} ${day}-${month}-${year}`;
-    case 'HH:mm , dd MMM yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort} ${year}`;
-    case 'HH:mm , dd MMM, yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort}, ${year}`;
-    case 'dd MMM yyyy, HH:mm': return `${day} ${monthNameShort} ${year}, ${hours24}:${minutes}`;
-    case 'HH:mm': return `${hours24}:${minutes}`;
-    case 'hh:mm A': return `${hours12}:${minutes} ${ampm}`;
-    case 'HH:mm:ss': return `${hours24}:${minutes}:${seconds}`;
-    case 'dddd, dd MMM yyyy': return `${dayName}, ${day} ${monthNameShort} ${year}`;
+    case 'dd-mm-yyyy': return `${day}-${month}-${year}` ; //console.log(formatTime({ date: new Date(), format: 'dd-mm-yyyy' })) ===> 31-05-2025;
+    case 'mm-dd-yyyy': return `${month}-${day}-${year}`; //console.log(formatTime({ date: new Date(), format: 'mm-dd-yyyy' })) ===> 05-31-2025;
+    case 'yyyy-mm-dd': return `${year}-${month}-${day}`; //console.log(formatTime({ date: new Date(), format: 'yyyy-mm-dd' })) ===> 2025-05-31;
+    case 'dd Month yyyy': return `${day} ${monthNameLong} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Month yyyy' })) ===> 31 May 2025;
+    case 'dd Mon yyyy': return `${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Mon yyyy' })) ===> 31 May 2025;
+    case 'dd Month, yyyy': return `${day} ${monthNameLong}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Month, yyyy' })) ===> 31 May, 2025;
+    case 'dd Mon, yyyy': return `${day} ${monthNameShort}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Mon, yyyy' })) ===> 31 May, 2025;
+    case 'HH:mm dd/mm/yyyy': return `${hours24}:${minutes} ${day}/${month}/${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm dd/mm/yyyy' })) ===> 12:00 31/05/2025;
+    case 'HH:mm dd-mm-yyyy': return `${hours24}:${minutes} ${day}-${month}-${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm dd-mm-yyyy' })) ===> 12:00 31-05-2025;
+    case 'HH:mm , dd MMM yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm , dd MMM yyyy' })) ===> 12:00 , 31 May 2025;
+    case 'HH:mm , dd MMM, yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm , dd MMM, yyyy' })) ===> 12:00 , 31 May, 2025;
+    case 'dd MMM yyyy, HH:mm': return `${day} ${monthNameShort} ${year}, ${hours24}:${minutes}`; //console.log(formatTime({ date: new Date(), format: 'dd MMM yyyy, HH:mm' })) ===> 31 May 2025, 12:00;
+    case 'HH:mm': return `${hours24}:${minutes}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm' })) ===> 12:00;
+    case 'hh:mm A': return `${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A' })) ===> 12:00 PM;
+    case 'HH:mm:ss': return `${hours24}:${minutes}:${seconds}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm:ss' })) ===> 12:00:00;
+    case 'dddd, dd MMM yyyy': return `${dayName}, ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dddd, dd MMM yyyy' })) ===> Friday, 31 May 2025;
+  //  new formats
+    case 'yyyy/MM/dd': return `${year}/${month}/${day}`; //console.log(formatTime({ date: new Date(), format: 'yyyy/MM/dd' })) ===> 2025/05/31;
+    case 'dd/MM/yyyy': return `${day}/${month}/${year}`; //console.log(formatTime({ date: new Date(), format: 'dd/MM/yyyy' })) ===> 31/05/2025;
+    case 'MM/dd/yyyy': return `${month}/${day}/${year}`; //console.log(formatTime({ date: new Date(), format: 'MM/dd/yyyy' })) ===> 05/31/2025;
+    case 'hh:mm A, dd MMM yyyy': return `${hours12}:${minutes} ${ampm}, ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A, dd MMM yyyy' })) ===> 12:00 PM, 31 May 2025;
+    case 'dddd, MMMM dd, yyyy': return `${dayName}, ${monthNameLong} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dddd, MMMM dd, yyyy' })) ===> Friday, May 31, 2025;
+    case 'ddd, MMM D, YYYY h:mm A': return `${dayNameShort}, ${monthNameShort} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'ddd, MMM D, YYYY h:mm A' })) ===> Fri, May 31, 2025 12:00 PM;
+    case 'MMMM D, YYYY h:mm A': return `${monthNameLong} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'MMMM D, YYYY h:mm A' })) ===> May 31, 2025 12:00 PM;
+    case 'MMMM D, YYYY': return `${monthNameLong} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'MMMM D, YYYY' })) ===> May 31, 2025;
+    case 'MMM D, YYYY': return `${monthNameShort} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'MMM D, YYYY' })) ===> May 31, 2025;
+    case 'D MMMM YYYY': return `${day} ${monthNameLong} ${year}`; //console.log(formatTime({ date: new Date(), format: 'D MMMM YYYY' })) ===> 31 May 2025;
+    case 'D MMM YYYY': return `${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'D MMM YYYY' })) ===> 31 May 2025;
+    case 'YYYY-MM-DDTHH:mm:ssZ': return `${year}-${month}-${day}T${hours24}:${minutes}:${seconds}Z`; //console.log(formatTime({ date: new Date(), format: 'YYYY-MM-DDTHH:mm:ssZ' })) ===> 2025-05-31T12:00:00Z;
+    case 'hh:mm:ss A': return `${hours12}:${minutes}:${seconds} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm:ss A' })) ===> 12:00:00 PM;
+    case 'HH:mm:ss.SSS': return `${hours24}:${minutes}:${seconds}.${seconds.slice(0, 2)}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm:ss.SSS' })) ===> 12:00:00.00;
+    case 'h:mm A': return `${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'h:mm A' })) ===> 12:00 PM;
+    case 'hh:mm A, dddd': return `${hours12}:${minutes} ${ampm}, ${dayName}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A, dddd' })) ===> 12:00 PM, Friday;
+    case 'dddd': return `${dayName}`; //console.log(formatTime({ date: new Date(), format: 'dddd' })) ===> Friday;
+    case 'ddd': return `${dayNameShort}`; //console.log(formatTime({ date: new Date(), format: 'ddd' })) ===> Fri;
+    
     case 'relative': {
       if (secondsAgo < 60) return `${secondsAgo} sec ago`;
       if (minutesAgo < 60) return `${minutesAgo} min ago`;
