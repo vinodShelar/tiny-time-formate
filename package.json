@@ -1,6 +1,6 @@
 {
   "name": "tiny-time-formatter",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simple and tiny utility to format dates and times with timezone and relative support",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
