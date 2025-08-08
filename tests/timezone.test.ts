@@ -9,7 +9,7 @@ describe("formatTime with Timezones", () => {
       const result = formatTime({
         date: testDate,
         format: "HH:mm",
-        getTimezone: "America/New_York",
+        timezone: "America/New_York",
       });
       // Note: The exact time will depend on daylight savings
       expect(result).toMatch(/^\d{2}:\d{2}$/);
@@ -19,7 +19,7 @@ describe("formatTime with Timezones", () => {
       const result = formatTime({
         date: testDate,
         format: "HH:mm",
-        getTimezone: "Asia/Tokyo",
+        timezone: "Asia/Tokyo",
       });
       expect(result).toBe("21:00");
     });
@@ -28,7 +28,7 @@ describe("formatTime with Timezones", () => {
       const result = formatTime({
         date: testDate,
         format: "HH:mm",
-        getTimezone: "Europe/London",
+        timezone: "Europe/London",
       });
       // Note: The exact time will depend on daylight savings
       expect(result).toMatch(/^\d{2}:\d{2}$/);
@@ -38,7 +38,7 @@ describe("formatTime with Timezones", () => {
       const result = formatTime({
         date: testDate,
         format: "HH:mm",
-        getTimezone: "Australia/Sydney",
+        timezone: "Australia/Sydney",
       });
       // Note: The exact time will depend on daylight savings
       expect(result).toMatch(/^\d{2}:\d{2}$/);

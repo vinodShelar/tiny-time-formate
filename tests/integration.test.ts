@@ -42,7 +42,7 @@ describe("Integration Tests", () => {
         formatTime({
           date: testDate,
           format: "HH:mm",
-          getTimezone: timezone,
+          timezone: timezone,
         })
       );
 
@@ -83,7 +83,7 @@ describe("Integration Tests", () => {
         formatTime({
           date: dstDate,
           format: "HH:mm",
-          getTimezone: "America/New_York",
+          timezone: "America/New_York",
         })
       ).toMatch(/^\d{2}:\d{2}$/);
     });
@@ -105,7 +105,7 @@ describe("Integration Tests", () => {
           date: new Date(),
           format: "HH:mm",
           // @ts-expect-error Testing invalid timezone
-          getTimezone: "Invalid/Timezone",
+          timezone: "Invalid/Timezone",
         })
       ).toThrow();
     });

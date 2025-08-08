@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatTime } from "../src";
+import { formatTime, isValidDate, parseDate, TimeFormatterError } from "../src";
 
 describe("formatTime", () => {
   describe("Basic Date Formatting", () => {
@@ -122,6 +122,60 @@ describe("formatTime", () => {
     it("should handle timestamp input", () => {
       const date = new Date("2024-03-15").getTime();
       expect(formatTime({ date, format: "dd-mm-yyyy" })).toBe("15-03-2024");
+    });
+  });
+
+  describe("Error Handling", () => {
+    it("should throw TimeFormatterError for invalid date", () => {
+      expect(() =>
+        formatTime({ date: "invalid-date", format: "dd-mm-yyyy" })
+      ).toThrow(TimeFormatterError);
+    });
+
+    it("should throw TimeFormatterError for invalid format", () => {
+      expect(() =>
+        formatTime({ date: new Date(), format: "invalid-format" as any })
+      ).toThrow(TimeFormatterError);
+    });
+  });
+});
+
+describe("Utility Functions", () => {
+  describe("isValidDate", () => {
+    it("should return true for valid Date object", () => {
+      expect(isValidDate(new Date())).toBe(true);
+    });
+
+    it("should return true for valid date string", () => {
+      expect(isValidDate("2024-03-15")).toBe(true);
+    });
+
+    it("should return true for valid timestamp", () => {
+      expect(isValidDate(1717152000000)).toBe(true);
+    });
+
+    it("should return false for invalid date", () => {
+      expect(isValidDate("invalid-date")).toBe(false);
+    });
+
+    it("should return false for null", () => {
+      expect(isValidDate(null)).toBe(false);
+    });
+  });
+
+  describe("parseDate", () => {
+    it("should parse valid date string", () => {
+      const result = parseDate("2024-03-15", "yyyy-mm-dd");
+      expect(result).toBeInstanceOf(Date);
+      expect(result.getFullYear()).toBe(2024);
+      expect(result.getMonth()).toBe(2); // March is month 2 (0-indexed)
+      expect(result.getDate()).toBe(15);
+    });
+
+    it("should throw TimeFormatterError for invalid date", () => {
+      expect(() => parseDate("invalid-date", "yyyy-mm-dd")).toThrow(
+        TimeFormatterError
+      );
     });
   });
 });

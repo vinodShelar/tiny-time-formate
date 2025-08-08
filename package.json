@@ -1,17 +1,26 @@
 {
-  "name": "tiny-time-formate",
+  "name": "tiny-time-formatter",
   "version": "1.0.4",
   "description": "A simple and tiny utility to format dates and times with timezone and relative support",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vinodShelar/tiny-time-formate"
+    "url": "https://github.com/vinodShelar/tiny-time-formatter"
   },
-  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsup",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "date",
@@ -20,13 +29,17 @@
     "utility",
     "typescript",
     "javascript",
-    "tiny"
+    "tiny",
+    "lightweight",
+    "timezone",
+    "relative-time"
   ],
   "author": "Vinod Nandulal Shelar",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vitest": "^3.1.3"
+    "vitest": "^3.1.3",
+    "tsup": "^8.0.0"
   },
   "volta": {
     "node": "22.15.0"

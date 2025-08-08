@@ -360,103 +360,118 @@ export type supportedTimeZones =
   | "Pacific/Wake"
   | "Pacific/Wallis";
 
-
 export type DateFormats =
-  | 'dd-mm-yyyy'
-  | 'mm-dd-yyyy'
-  | 'yyyy-mm-dd'
-  | 'dd Month yyyy'
-  | 'dd Mon yyyy'
-  | 'dd Month, yyyy'
-  | 'dd Mon, yyyy'
-  | 'HH:mm dd/mm/yyyy'
-  | 'HH:mm dd-mm-yyyy'
-  | 'HH:mm , dd MMM yyyy'
-  | 'HH:mm , dd MMM, yyyy'
-  | 'dd MMM yyyy, HH:mm'
-  | 'HH:mm'
-  | 'hh:mm A'
-  | 'HH:mm:ss'
-  | 'dddd, dd MMM yyyy'
+  | "dd-mm-yyyy"
+  | "mm-dd-yyyy"
+  | "yyyy-mm-dd"
+  | "dd Month yyyy"
+  | "dd Mon yyyy"
+  | "dd Month, yyyy"
+  | "dd Mon, yyyy"
+  | "HH:mm dd/mm/yyyy"
+  | "HH:mm dd-mm-yyyy"
+  | "HH:mm , dd MMM yyyy"
+  | "HH:mm , dd MMM, yyyy"
+  | "dd MMM yyyy, HH:mm"
+  | "HH:mm"
+  | "hh:mm A"
+  | "HH:mm:ss"
+  | "dddd, dd MMM yyyy"
   // new formats
-  | 'yyyy/MM/dd'
-  | 'dd/MM/yyyy'
-  | 'MM/dd/yyyy'
-  | 'hh:mm A, dd MMM yyyy'
-  | 'dddd, MMMM dd, yyyy'
-  | 'ddd, MMM D, YYYY h:mm A'
-  | 'MMMM D, YYYY h:mm A'
-  | 'MMMM D, YYYY'
-  | 'MMM D, YYYY'
-  | 'D MMMM YYYY'
-  | 'D MMM YYYY'
-  | 'YYYY-MM-DDTHH:mm:ssZ'
-  | 'hh:mm:ss A'
-  | 'HH:mm:ss.SSS'
-  | 'h:mm A'
-  | 'hh:mm A, dddd'
-  | 'dddd'
-  | 'ddd'
-
-  | 'relative'
-  | 'future'
+  | "yyyy/MM/dd"
+  | "dd/MM/yyyy"
+  | "MM/dd/yyyy"
+  | "hh:mm A, dd MMM yyyy"
+  | "dddd, MMMM dd, yyyy"
+  | "ddd, MMM D, YYYY h:mm A"
+  | "MMMM D, YYYY h:mm A"
+  | "MMMM D, YYYY"
+  | "MMM D, YYYY"
+  | "D MMMM YYYY"
+  | "D MMM YYYY"
+  | "YYYY-MM-DDTHH:mm:ssZ"
+  | "hh:mm:ss A"
+  | "HH:mm:ss.SSS"
+  | "h:mm A"
+  | "hh:mm A, dddd"
+  | "dddd"
+  | "ddd"
+  | "relative"
+  | "future"
   | string;
-
 
 interface TimeFormatterOptions {
   date: Date | string | number;
   format?: DateFormats;
-  getTimezone?: supportedTimeZones;
+  timezone?: supportedTimeZones; // Renamed from getTimezone
 }
 
+export class TimeFormatterError extends Error {
+  constructor(message: string, public code: string) {
+    super(message);
+    this.name = "TimeFormatterError";
+  }
+}
 
-export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFormatterOptions): string {
+export function formatTime({
+  date,
+  format = "dd-mm-yyyy",
+  timezone,
+}: TimeFormatterOptions): string {
   const getZonedDate = (date: Date): Date => {
-    if (!getTimezone) return date;
+    if (!timezone) return date;
     try {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: getTimezone,
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone,
         hour12: false,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       });
       const parts = formatter.formatToParts(date).reduce((acc, part) => {
-        if (part.type !== 'literal') acc[part.type] = part.value;
+        if (part.type !== "literal") acc[part.type] = part.value;
         return acc;
       }, {} as Record<string, string>);
-      return new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`);
+      return new Date(
+        `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`
+      );
     } catch (error) {
-      throw new Error(`Invalid timezone: ${getTimezone}`);
+      throw new TimeFormatterError(
+        `Invalid timezone: ${timezone}`,
+        "INVALID_TIMEZONE"
+      );
     }
   };
 
   const parseDate = (input: Date | string | number): Date => {
-    if (typeof input === 'number' || !isNaN(Number(input))) return new Date(Number(input));
+    if (typeof input === "number" || !isNaN(Number(input)))
+      return new Date(Number(input));
     const parsedDate = new Date(input);
     if (isNaN(parsedDate.getTime())) {
-      throw new Error(`Invalid date: ${input}`);
+      throw new TimeFormatterError(`Invalid date: ${input}`, "INVALID_DATE");
     }
     return parsedDate;
   };
 
   const dateObj = getZonedDate(parseDate(date));
-  const day = dateObj.getDate().toString().padStart(2, '0');
-  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
   const year = dateObj.getFullYear();
   const hours = dateObj.getHours();
-  const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-  const seconds = dateObj.getSeconds().toString().padStart(2, '0');
-  const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-  const dayNameShort = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
-  const monthNameShort = dateObj.toLocaleString('en-US', { month: 'short' });
-  const monthNameLong = dateObj.toLocaleString('en-US', { month: 'long' });
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const hours12 = (hours % 12 || 12).toString().padStart(2, '0');
-  const hours24 = hours.toString().padStart(2, '0');
+  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+  const seconds = dateObj.getSeconds().toString().padStart(2, "0");
+  const dayName = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+  const dayNameShort = dateObj.toLocaleDateString("en-US", {
+    weekday: "short",
+  });
+  const monthNameShort = dateObj.toLocaleString("en-US", { month: "short" });
+  const monthNameLong = dateObj.toLocaleString("en-US", { month: "long" });
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const hours12 = (hours % 12 || 12).toString().padStart(2, "0");
+  const hours24 = hours.toString().padStart(2, "0");
 
   const now = new Date();
   const timeDifference = +now - +dateObj;
@@ -465,55 +480,87 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
   const hoursAgo = Math.floor(minutesAgo / 60);
   const daysAgo = Math.floor(hoursAgo / 24);
 
-
   switch (format) {
-    case 'dd-mm-yyyy': return `${day}-${month}-${year}` ; //console.log(formatTime({ date: new Date(), format: 'dd-mm-yyyy' })) ===> 31-05-2025;
-    case 'mm-dd-yyyy': return `${month}-${day}-${year}`; //console.log(formatTime({ date: new Date(), format: 'mm-dd-yyyy' })) ===> 05-31-2025;
-    case 'yyyy-mm-dd': return `${year}-${month}-${day}`; //console.log(formatTime({ date: new Date(), format: 'yyyy-mm-dd' })) ===> 2025-05-31;
-    case 'dd Month yyyy': return `${day} ${monthNameLong} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Month yyyy' })) ===> 31 May 2025;
-    case 'dd Mon yyyy': return `${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Mon yyyy' })) ===> 31 May 2025;
-    case 'dd Month, yyyy': return `${day} ${monthNameLong}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Month, yyyy' })) ===> 31 May, 2025;
-    case 'dd Mon, yyyy': return `${day} ${monthNameShort}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dd Mon, yyyy' })) ===> 31 May, 2025;
-    case 'HH:mm dd/mm/yyyy': return `${hours24}:${minutes} ${day}/${month}/${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm dd/mm/yyyy' })) ===> 12:00 31/05/2025;
-    case 'HH:mm dd-mm-yyyy': return `${hours24}:${minutes} ${day}-${month}-${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm dd-mm-yyyy' })) ===> 12:00 31-05-2025;
-    case 'HH:mm , dd MMM yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm , dd MMM yyyy' })) ===> 12:00 , 31 May 2025;
-    case 'HH:mm , dd MMM, yyyy': return `${hours24}:${minutes} , ${day} ${monthNameShort}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm , dd MMM, yyyy' })) ===> 12:00 , 31 May, 2025;
-    case 'dd MMM yyyy, HH:mm': return `${day} ${monthNameShort} ${year}, ${hours24}:${minutes}`; //console.log(formatTime({ date: new Date(), format: 'dd MMM yyyy, HH:mm' })) ===> 31 May 2025, 12:00;
-    case 'HH:mm': return `${hours24}:${minutes}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm' })) ===> 12:00;
-    case 'hh:mm A': return `${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A' })) ===> 12:00 PM;
-    case 'HH:mm:ss': return `${hours24}:${minutes}:${seconds}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm:ss' })) ===> 12:00:00;
-    case 'dddd, dd MMM yyyy': return `${dayName}, ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'dddd, dd MMM yyyy' })) ===> Friday, 31 May 2025;
-  //  new formats
-    case 'yyyy/MM/dd': return `${year}/${month}/${day}`; //console.log(formatTime({ date: new Date(), format: 'yyyy/MM/dd' })) ===> 2025/05/31;
-    case 'dd/MM/yyyy': return `${day}/${month}/${year}`; //console.log(formatTime({ date: new Date(), format: 'dd/MM/yyyy' })) ===> 31/05/2025;
-    case 'MM/dd/yyyy': return `${month}/${day}/${year}`; //console.log(formatTime({ date: new Date(), format: 'MM/dd/yyyy' })) ===> 05/31/2025;
-    case 'hh:mm A, dd MMM yyyy': return `${hours12}:${minutes} ${ampm}, ${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A, dd MMM yyyy' })) ===> 12:00 PM, 31 May 2025;
-    case 'dddd, MMMM dd, yyyy': return `${dayName}, ${monthNameLong} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'dddd, MMMM dd, yyyy' })) ===> Friday, May 31, 2025;
-    case 'ddd, MMM D, YYYY h:mm A': return `${dayNameShort}, ${monthNameShort} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'ddd, MMM D, YYYY h:mm A' })) ===> Fri, May 31, 2025 12:00 PM;
-    case 'MMMM D, YYYY h:mm A': return `${monthNameLong} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'MMMM D, YYYY h:mm A' })) ===> May 31, 2025 12:00 PM;
-    case 'MMMM D, YYYY': return `${monthNameLong} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'MMMM D, YYYY' })) ===> May 31, 2025;
-    case 'MMM D, YYYY': return `${monthNameShort} ${day}, ${year}`; //console.log(formatTime({ date: new Date(), format: 'MMM D, YYYY' })) ===> May 31, 2025;
-    case 'D MMMM YYYY': return `${day} ${monthNameLong} ${year}`; //console.log(formatTime({ date: new Date(), format: 'D MMMM YYYY' })) ===> 31 May 2025;
-    case 'D MMM YYYY': return `${day} ${monthNameShort} ${year}`; //console.log(formatTime({ date: new Date(), format: 'D MMM YYYY' })) ===> 31 May 2025;
-    case 'YYYY-MM-DDTHH:mm:ssZ': return `${year}-${month}-${day}T${hours24}:${minutes}:${seconds}Z`; //console.log(formatTime({ date: new Date(), format: 'YYYY-MM-DDTHH:mm:ssZ' })) ===> 2025-05-31T12:00:00Z;
-    case 'hh:mm:ss A': return `${hours12}:${minutes}:${seconds} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm:ss A' })) ===> 12:00:00 PM;
-    case 'HH:mm:ss.SSS': return `${hours24}:${minutes}:${seconds}.${seconds.slice(0, 2)}`; //console.log(formatTime({ date: new Date(), format: 'HH:mm:ss.SSS' })) ===> 12:00:00.00;
-    case 'h:mm A': return `${hours12}:${minutes} ${ampm}`; //console.log(formatTime({ date: new Date(), format: 'h:mm A' })) ===> 12:00 PM;
-    case 'hh:mm A, dddd': return `${hours12}:${minutes} ${ampm}, ${dayName}`; //console.log(formatTime({ date: new Date(), format: 'hh:mm A, dddd' })) ===> 12:00 PM, Friday;
-    case 'dddd': return `${dayName}`; //console.log(formatTime({ date: new Date(), format: 'dddd' })) ===> Friday;
-    case 'ddd': return `${dayNameShort}`; //console.log(formatTime({ date: new Date(), format: 'ddd' })) ===> Fri;
-    
-    case 'relative': {
+    case "dd-mm-yyyy":
+      return `${day}-${month}-${year}`;
+    case "mm-dd-yyyy":
+      return `${month}-${day}-${year}`;
+    case "yyyy-mm-dd":
+      return `${year}-${month}-${day}`;
+    case "dd Month yyyy":
+      return `${day} ${monthNameLong} ${year}`;
+    case "dd Mon yyyy":
+      return `${day} ${monthNameShort} ${year}`;
+    case "dd Month, yyyy":
+      return `${day} ${monthNameLong}, ${year}`;
+    case "dd Mon, yyyy":
+      return `${day} ${monthNameShort}, ${year}`;
+    case "HH:mm dd/mm/yyyy":
+      return `${hours24}:${minutes} ${day}/${month}/${year}`;
+    case "HH:mm dd-mm-yyyy":
+      return `${hours24}:${minutes} ${day}-${month}-${year}`;
+    case "HH:mm , dd MMM yyyy":
+      return `${hours24}:${minutes} , ${day} ${monthNameShort} ${year}`;
+    case "HH:mm , dd MMM, yyyy":
+      return `${hours24}:${minutes} , ${day} ${monthNameShort}, ${year}`;
+    case "dd MMM yyyy, HH:mm":
+      return `${day} ${monthNameShort} ${year}, ${hours24}:${minutes}`;
+    case "HH:mm":
+      return `${hours24}:${minutes}`;
+    case "hh:mm A":
+      return `${hours12}:${minutes} ${ampm}`;
+    case "HH:mm:ss":
+      return `${hours24}:${minutes}:${seconds}`;
+    case "dddd, dd MMM yyyy":
+      return `${dayName}, ${day} ${monthNameShort} ${year}`;
+    case "yyyy/MM/dd":
+      return `${year}/${month}/${day}`;
+    case "dd/MM/yyyy":
+      return `${day}/${month}/${year}`;
+    case "MM/dd/yyyy":
+      return `${month}/${day}/${year}`;
+    case "hh:mm A, dd MMM yyyy":
+      return `${hours12}:${minutes} ${ampm}, ${day} ${monthNameShort} ${year}`;
+    case "dddd, MMMM dd, yyyy":
+      return `${dayName}, ${monthNameLong} ${day}, ${year}`;
+    case "ddd, MMM D, YYYY h:mm A":
+      return `${dayNameShort}, ${monthNameShort} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`;
+    case "MMMM D, YYYY h:mm A":
+      return `${monthNameLong} ${day}, ${year}, ${hours12}:${minutes} ${ampm}`;
+    case "MMMM D, YYYY":
+      return `${monthNameLong} ${day}, ${year}`;
+    case "MMM D, YYYY":
+      return `${monthNameShort} ${day}, ${year}`;
+    case "D MMMM YYYY":
+      return `${day} ${monthNameLong} ${year}`;
+    case "D MMM YYYY":
+      return `${day} ${monthNameShort} ${year}`;
+    case "YYYY-MM-DDTHH:mm:ssZ":
+      return `${year}-${month}-${day}T${hours24}:${minutes}:${seconds}Z`;
+    case "hh:mm:ss A":
+      return `${hours12}:${minutes}:${seconds} ${ampm}`;
+    case "HH:mm:ss.SSS":
+      return `${hours24}:${minutes}:${seconds}.${seconds.slice(0, 2)}`;
+    case "h:mm A":
+      return `${hours12}:${minutes} ${ampm}`;
+    case "hh:mm A, dddd":
+      return `${hours12}:${minutes} ${ampm}, ${dayName}`;
+    case "dddd":
+      return `${dayName}`;
+    case "ddd":
+      return `${dayNameShort}`;
+
+    case "relative": {
       if (secondsAgo < 60) return `${secondsAgo} sec ago`;
       if (minutesAgo < 60) return `${minutesAgo} min ago`;
       if (hoursAgo < 24) return `${hoursAgo} hrs ago`;
       if (daysAgo < 30) return `${daysAgo} days ago`;
       return `${day} ${monthNameShort} ${year}`;
     }
-    case 'future': {
+    case "future": {
       const timeAhead = +dateObj - +now;
-      if (timeAhead <= 0) return 'opened just now';
-    
+      if (timeAhead <= 0) return "opened just now";
+
       const sec = Math.floor(timeAhead / 1000);
       const min = Math.floor(sec / 60);
       const hr = Math.floor(min / 60);
@@ -521,20 +568,42 @@ export function formatTime({ date, format = 'dd-mm-yyyy', getTimezone }: TimeFor
       const week = Math.floor(day / 7);
       const month = Math.floor(day / 30);
       const year = Math.floor(day / 365);
-    
-      if (sec < 60) return `opens in ${sec} sec${sec > 1 ? 's' : ''}`;
-      if (min < 60) return `opens in ${min} min${min > 1 ? 's' : ''}`;
-      if (hr < 24) return `opens in ${hr} hr${hr > 1 ? 's' : ''}`;
-      if (day < 7) return `opens in ${day} day${day > 1 ? 's' : ''}`;
-      if (week < 4) return `opens in ${week} week${week > 1 ? 's' : ''}`;
-      if (month < 12) return `opens in ${month} month${month > 1 ? 's' : ''}`;
-      return `opens in ${year} year${year > 1 ? 's' : ''}`;
+
+      if (sec < 60) return `opens in ${sec} sec${sec > 1 ? "s" : ""}`;
+      if (min < 60) return `opens in ${min} min${min > 1 ? "s" : ""}`;
+      if (hr < 24) return `opens in ${hr} hr${hr > 1 ? "s" : ""}`;
+      if (day < 7) return `opens in ${day} day${day > 1 ? "s" : ""}`;
+      if (week < 4) return `opens in ${week} week${week > 1 ? "s" : ""}`;
+      if (month < 12) return `opens in ${month} month${month > 1 ? "s" : ""}`;
+      return `opens in ${year} year${year > 1 ? "s" : ""}`;
     }
     default: {
-      if (format !== 'dd-mm-yyyy') {
-        throw new Error(`Invalid format: ${format}`);
+      if (format !== "dd-mm-yyyy") {
+        throw new TimeFormatterError(
+          `Invalid format: ${format}`,
+          "INVALID_FORMAT"
+        );
       }
       return `${day}-${month}-${year}`;
     }
   }
+}
+
+// Utility functions
+export function isValidDate(date: any): boolean {
+  if (date instanceof Date) return !isNaN(date.getTime());
+  if (typeof date === "string" || typeof date === "number") {
+    const parsed = new Date(date);
+    return !isNaN(parsed.getTime());
+  }
+  return false;
+}
+
+export function parseDate(input: string, format: string): Date {
+  // Basic implementation - can be enhanced
+  const parsed = new Date(input);
+  if (isNaN(parsed.getTime())) {
+    throw new TimeFormatterError(`Cannot parse date: ${input}`, "PARSE_ERROR");
+  }
+  return parsed;
 }
