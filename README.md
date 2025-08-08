@@ -68,19 +68,19 @@ A lightweight TypeScript utility for flexible date formatting with support for r
 Using npm:
 
 ```bash
-npm install tiny-time-formatter
+npm install tiny-time-formate
 ```
 
 Using yarn:
 
 ```bash
-yarn add tiny-time-formatter
+yarn add tiny-time-formate
 ```
 
 Using pnpm:
 
 ```bash
-pnpm add tiny-time-formatter
+pnpm add tiny-time-formate
 ```
 
 ## Usage
@@ -88,7 +88,7 @@ pnpm add tiny-time-formatter
 ### Basic Usage
 
 ```ts
-import { formatTime } from "tiny-time-formatter";
+import { formatTime } from "tiny-time-formate";
 
 const formattedDate = formatTime({
   date: new Date(),
@@ -102,7 +102,7 @@ console.log(formattedDate); // Outputs: '13-05-2025'
 ### Relative Time
 
 ```ts
-import { formatTime } from "tiny-time-formatter";
+import { formatTime } from "tiny-time-formate";
 
 // Past time
 const pastDate = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours ago
@@ -118,7 +118,7 @@ console.log(formatTime({ date: futureDate, format: "future" }));
 ### Timezone Conversion
 
 ```ts
-import { formatTime } from "tiny-time-formatter";
+import { formatTime } from "tiny-time-formate";
 
 const date = new Date("2025-05-31T12:00:00Z");
 
@@ -141,7 +141,7 @@ console.log(tokyoTime); // Outputs: "21:00 31/05/2025" (UTC+9)
 ### Multiple Input Types
 
 ```ts
-import { formatTime } from "tiny-time-formatter";
+import { formatTime } from "tiny-time-formate";
 
 // Date object
 formatTime({ date: new Date(), format: "dd-mm-yyyy" });

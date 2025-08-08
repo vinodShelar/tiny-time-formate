@@ -1,6 +1,6 @@
 {
-  "name": "tiny-time-formatter",
-  "version": "0.0.1",
+  "name": "tiny-time-formate",
+  "version": "1.0.0",
   "description": "A simple and tiny utility to format dates and times with timezone and relative support",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vinodShelar/tiny-time-formatter"
+    "url": "https://github.com/vinodShelar/tiny-time-formate"
   },
   "scripts": {
     "build": "tsc && tsup",
